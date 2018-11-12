@@ -1,23 +1,21 @@
-function x = G(P, n, deltaQ)
+function g = G(P, n, deltaQ, sigma)
+%%
+if nargin < 4, sigma = 1; end
 
-G0 = G_zero(n, deltaQ);
-
+G0 = G_zero(n, deltaQ, sigma);
 kernelSize = 2 * P + 1;
-result = zeros(kernelSize);
+g = zeros(kernelSize);
 
 q = deltaQ:deltaQ:n*deltaQ;
 qSquare = q.*q;
 
 for l=-P:1:P
     for k=-P:1:P
-        r = sqrt(l.*l + k.*k);
+        r = sqrt(l.^2 + k.^2);
         b = besselj(0, r.*q);
-        powers = exp(-1 * qSquare);
+        powers = exp(-sigma * qSquare);
         scalars = qSquare .* powers .* b;
-        result(l + P + 1, k + P + 1) = sum(scalars) / G0;
+        g(l + P + 1, k + P + 1) = sum(scalars) / G0;
     end
 end
-
-x = result;
-
 end
