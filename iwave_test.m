@@ -1,13 +1,6 @@
 clear all;
 close all;
 
-deltaTime = 0.03;
-deltaAlpha = 0.03;
-
-gravity = 9.81;
-gravitydtdt = 9.81 * deltaTime * deltaTime;
-onealphat = 1 + deltaAlpha * deltaTime;
-
 g_n = 10000;
 g_deltaQ = 0.001;
 kernel_radius = 10;
@@ -50,7 +43,18 @@ hi = imshow(heights, 'DisplayRange', [], 'Parent', ha);
 % axis(ha, 'equal');
 % zlim(ha, [-10 5]);
 
+deltaAlpha = 0.03;
+start_time = rem(now(),1)*1e5;
+
 while true
+    
+    end_time = rem(now(),1)*1e5;
+    deltaTime = end_time - start_time
+    start_time = end_time;
+    
+    gravity = 9.81;
+    gravitydtdt = 9.81 * deltaTime * deltaTime;
+    onealphat = 1 + deltaAlpha * deltaTime;
     
     heights = heights + sources;
     heights = heights .* obstruction;
