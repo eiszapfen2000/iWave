@@ -21,9 +21,8 @@ forceIn = fspecial('gauss',15,1)*5;
 
 sources(253:267,253:267) = forceIn;
 
-obstruction(200-kernel_radius/2:200-1,:) = 0;
-obstruction(200,:) = 0;
-obstruction(200+1:200+kernel_radius/2,:) = 0;
+obstruction(200-kernel_radius/2:200+kernel_radius/2,:) = 0;
+obstruction(200-kernel_radius/2:200+kernel_radius/2,200:250) = 1;
 
 % depthr = 1:10/(resolution - 1):11;
 % depth = repmat(depthr, resolution, 1);
@@ -45,6 +44,9 @@ hh = imshow(heights, 'DisplayRange', [], 'Parent', hah,'InitialMagnification','f
 % axis(ha, 'equal');
 % zlim(ha, [-10 5]);
 
+depth_p = padarraymirror(depth, kernel_radius, kernel_radius);
+depthDerivative = conv2(depth_p, gkernel, 'valid');
+
 deltaAlpha = 0.03;
 startTime = rem(now(),1);
 
@@ -54,35 +56,9 @@ while true
     deltaTime = (endTime - startTime) * 1e5;
     startTime = endTime;
     
-    [heights, prevHeights] = iWave(gkernel,heights,prevHeights,sources,obstruction,depth,deltaTime,deltaAlpha);
-
-%     gravity = 9.81;
-%     gravitydtdt = gravity * deltaTime * deltaTime;
-%     onealphat = 1 + deltaAlpha * deltaTime;
-% 
-%     heights = heights + sources;
-%     heights = heights .* obstruction;
-% 
-%     borderSize = floor(size(gkernel,1)/2);
-%     depth_p = padarraymirror(depth,borderSize, borderSize);
-%     depthDerivative = conv2(depth_p, gkernel, 'valid');
-%     shallowheights = tanh(depthDerivative) .* heights;
-%     shallowheights_p = padarraymirror(shallowheights,borderSize,borderSize);
-%     derivative = conv2(shallowheights_p, gkernel, 'valid');
-% 
-%     temp = heights;
-% 
-%     heights = heights .* ((2 - deltaAlpha * deltaTime) / onealphat);
-%     heights = heights - prevHeights .* (1 / onealphat);
-%     heights = heights - derivative .* (gravitydtdt / onealphat);
-% 
-%     prevHeights = temp;
+    [heights, prevHeights] = iWave(gkernel,heights,prevHeights,sources,obstruction,depthDerivative,deltaTime,deltaAlpha);
 
     set(hh, 'CData', heights);
-
-%     waitforbuttonpress;
-%     set(hs, 'ZData', heights);
-
     pause(eps);
     drawnow();
     

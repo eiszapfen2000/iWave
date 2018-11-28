@@ -1,4 +1,4 @@
-function [heights, prev_heights] = iWave(gkernel, heights, prev_heights, sources, obstructions, depth, dt, da)
+function [heights, prev_heights] = iWave(gkernel, heights, prev_heights, sources, obstructions, depth_deriv, dt, da)
 %%
 gravity = 9.81;
 gravitydtdt = gravity * dt * dt;
@@ -8,9 +8,7 @@ heights = heights + sources;
 heights = heights .* obstructions;
 
 borderSize = floor(size(gkernel,1)/2);
-depth_p = padarraymirror(depth,borderSize, borderSize);
-depthDerivative = conv2(depth_p, gkernel, 'valid');
-shallowheights = tanh(depthDerivative) .* heights;
+shallowheights = tanh(depth_deriv) .* heights;
 shallowheights_p = padarraymirror(shallowheights,borderSize,borderSize);
 derivative = conv2(shallowheights_p, gkernel, 'valid');
 
