@@ -53,28 +53,30 @@ while true
     endTime = rem(now(),1);
     deltaTime = (endTime - startTime) * 1e5;
     startTime = endTime;
+    
+    [heights, prevHeights] = iWave(gkernel,heights,prevHeights,sources,obstruction,depth,deltaTime,deltaAlpha);
 
-    gravity = 9.81;
-    gravitydtdt = gravity * deltaTime * deltaTime;
-    onealphat = 1 + deltaAlpha * deltaTime;
-
-    heights = heights + sources;
-    heights = heights .* obstruction;
-
-    borderSize = floor(size(gkernel,1)/2);
-    depth_p = padarraymirror(depth,borderSize, borderSize);
-    depthDerivative = conv2(depth_p, gkernel, 'valid');
-    shallowheights = tanh(depthDerivative) .* heights;
-    shallowheights_p = padarraymirror(shallowheights,borderSize,borderSize);
-    derivative = conv2(shallowheights_p, gkernel, 'valid');
-
-    temp = heights;
-
-    heights = heights .* ((2 - deltaAlpha * deltaTime) / onealphat);
-    heights = heights - prevHeights .* (1 / onealphat);
-    heights = heights - derivative .* (gravitydtdt / onealphat);
-
-    prevHeights = temp;
+%     gravity = 9.81;
+%     gravitydtdt = gravity * deltaTime * deltaTime;
+%     onealphat = 1 + deltaAlpha * deltaTime;
+% 
+%     heights = heights + sources;
+%     heights = heights .* obstruction;
+% 
+%     borderSize = floor(size(gkernel,1)/2);
+%     depth_p = padarraymirror(depth,borderSize, borderSize);
+%     depthDerivative = conv2(depth_p, gkernel, 'valid');
+%     shallowheights = tanh(depthDerivative) .* heights;
+%     shallowheights_p = padarraymirror(shallowheights,borderSize,borderSize);
+%     derivative = conv2(shallowheights_p, gkernel, 'valid');
+% 
+%     temp = heights;
+% 
+%     heights = heights .* ((2 - deltaAlpha * deltaTime) / onealphat);
+%     heights = heights - prevHeights .* (1 / onealphat);
+%     heights = heights - derivative .* (gravitydtdt / onealphat);
+% 
+%     prevHeights = temp;
 
     set(hh, 'CData', heights);
 
