@@ -33,8 +33,11 @@ gkernel = G(kernel_radius, g_n, g_deltaQ);
 % imshow(heights,[]);
 
 hf = figure();
-ha = axes('Parent',hf);
-hi = imshow(heights, 'DisplayRange', [], 'Parent', ha);
+% ha = axes('Parent',hf,'Units','normalized');
+ha1 = subplot(1,2,1,'Parent',hf,'Units','normalized');
+ha2 = subplot(1,2,2,'Parent',hf,'Units','normalized');
+hs = imshow(sources, 'DisplayRange', [0 1], 'Parent', ha1,'InitialMagnification','fit','Border','tight');
+hi = imshow(heights, 'DisplayRange', [], 'Parent', ha2,'InitialMagnification','fit','Border','tight');
 % hd = surf(-depth, 'Parent', ha, 'FaceColor', [1 0 0]);
 % hold on
 % hs = surf(heights, 'Parent', ha, 'FaceColor', [0 1 0]);
@@ -49,7 +52,7 @@ startTime = rem(now(),1)*1e5;
 while true
     
     endTime = rem(now(),1)*1e5;
-    deltaTime = endTime - startTime;
+    deltaTime = endTime - startTime
     startTime = endTime;
     
     gravity = 9.81;
