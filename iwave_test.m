@@ -5,7 +5,6 @@ g_n = 10000;
 g_deltaQ = 0.001;
 kernel_radius = 10;
 resolution = 512;
-border_mode = 'symmetric';
 
 heights     = zeros(resolution);
 prevHeights = zeros(resolution);
@@ -14,11 +13,17 @@ sources     = zeros(resolution);
 obstruction = ones(resolution);
 depth       = ones(resolution);
 
-sources(20:40, 80:100) = 0.25;
-sources(25:35, 85:95) = 0.5;
-sources(128, 128) = 1;
+forceIn = fspecial('gauss',15,1)*5;
 
-obstruction(60:100, 80:100) = 0;
+% sources(20:40, 80:100) = 0.25;
+% sources(25:35, 85:95) = 0.5;
+% sources(128, 128) = 1;
+
+sources(253:267,253:267) = forceIn;
+
+obstruction(200-kernel_radius/2:200-1,:) = 0;
+obstruction(200,:) = 0;
+obstruction(200+1:200+kernel_radius/2,:) = 0;
 
 % depthr = 1:10/(resolution - 1):11;
 % depth = repmat(depthr, resolution, 1);
@@ -40,7 +45,7 @@ hh = imshow(heights, 'DisplayRange', [], 'Parent', hah,'InitialMagnification','f
 % axis(ha, 'equal');
 % zlim(ha, [-10 5]);
 
-deltaAlpha = 0.1;
+deltaAlpha = 0.03;
 startTime = rem(now(),1);
 
 while true
@@ -56,10 +61,11 @@ while true
     heights = heights + sources;
     heights = heights .* obstruction;
 
-    depth_p = padarraymirror(depth,kernel_radius, kernel_radius);
+    borderSize = floor(size(gkernel,1)/2);
+    depth_p = padarraymirror(depth,borderSize, borderSize);
     depthDerivative = conv2(depth_p, gkernel, 'valid');
     shallowheights = tanh(depthDerivative) .* heights;
-    shallowheights_p = padarraymirror(shallowheights,kernel_radius,kernel_radius);
+    shallowheights_p = padarraymirror(shallowheights,borderSize,borderSize);
     derivative = conv2(shallowheights_p, gkernel, 'valid');
 
     temp = heights;
