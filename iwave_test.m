@@ -25,10 +25,10 @@ sources(20:40, 80:100) = 0.25;
 sources(25:35, 85:95) = 0.5;
 sources(128, 128) = 1;
 
-obstruction(60:100, 80:100) = 0;
-%obstruction = obstruction - 1;
+% obstruction(60:100, 80:100) = 0;
+% obstruction = obstruction - 1;
 
-depthr = 0:10/(resolution - 1):10;
+depthr = 1:10/(resolution - 1):11;
 depth = repmat(depthr, resolution, 1);
 gkernel = G(kernel_radius, g_n, g_deltaQ);
 
@@ -38,9 +38,6 @@ gkernel = G(kernel_radius, g_n, g_deltaQ);
 % imshow(obstruction,[]);
 % subplot(2,2,3);
 % imshow(heights,[]);
-
-endTime = 5;
-startTime = 0;
 
 hf = figure();
 ha = axes('Parent',hf);
@@ -62,10 +59,10 @@ while true
 %     shallowheights = tanh(depthDerivative) .* heights;
 %     derivative = conv2(shallowheights, gkernel, 'zero');
 
-    depth_p = padarray(depth,[kernel_radius kernel_radius], border_mode);
+    depth_p = padarraymirror(depth,kernel_radius, kernel_radius);
     depthDerivative = conv2(depth_p, gkernel, 'valid');
     shallowheights = tanh(depthDerivative) .* heights;
-    shallowheights_p = padarray(shallowheights,[kernel_radius kernel_radius], border_mode);
+    shallowheights_p = padarraymirror(shallowheights,kernel_radius,kernel_radius);
     derivative = conv2(shallowheights_p, gkernel, 'valid');
 
     
@@ -77,8 +74,6 @@ while true
     
     prevHeights = temp;
     
-    startTime = startTime + deltaTime;
-
     set(hi, 'CData', heights);
 %     waitforbuttonpress;
 %     set(hs, 'ZData', heights);
