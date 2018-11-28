@@ -43,14 +43,14 @@ hi = imshow(heights, 'DisplayRange', [], 'Parent', ha);
 % axis(ha, 'equal');
 % zlim(ha, [-10 5]);
 
-deltaAlpha = 0.03;
-start_time = rem(now(),1)*1e5;
+deltaAlpha = 0.1;
+startTime = rem(now(),1)*1e5;
 
 while true
     
-    end_time = rem(now(),1)*1e5;
-    deltaTime = end_time - start_time
-    start_time = end_time;
+    endTime = rem(now(),1)*1e5;
+    deltaTime = endTime - startTime;
+    startTime = endTime;
     
     gravity = 9.81;
     gravitydtdt = 9.81 * deltaTime * deltaTime;
